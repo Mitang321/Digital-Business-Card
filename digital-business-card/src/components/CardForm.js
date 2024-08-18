@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Form, Button, Container, Row, Col, Image } from "react-bootstrap";
+import {
+  Form,
+  Button,
+  Container,
+  Row,
+  Col,
+  Alert,
+  Image,
+} from "react-bootstrap";
+import CardReview from "./CardReview";
 
 const CardForm = ({ onSubmit, initialData }) => {
   const [formData, setFormData] = useState({
@@ -12,21 +21,73 @@ const CardForm = ({ onSubmit, initialData }) => {
     image: "",
   });
 
+  const [imagePreview, setImagePreview] = useState("");
+  const [formErrors, setFormErrors] = useState({});
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [reviewMode, setReviewMode] = useState(false);
+
   useEffect(() => {
     if (initialData) {
       setFormData(initialData);
+      setImagePreview(initialData.image || "");
     }
   }, [initialData]);
 
+  const validateForm = () => {
+    const errors = {};
+    if (!formData.name) errors.name = "Name is required";
+    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email))
+      errors.email = "Email is invalid";
+    if (formData.phone && !/^\d+$/.test(formData.phone))
+      errors.phone = "Phone number is invalid";
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type, files } = e.target;
+
+    if (type === "file") {
+      const file = files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setFormData({ ...formData, [name]: reader.result });
+          setImagePreview(reader.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    if (validateForm()) {
+      setReviewMode(true);
+    }
   };
+
+  const handleConfirm = (data) => {
+    onSubmit(data);
+    setShowSuccess(true);
+    setReviewMode(false);
+  };
+
+  const handleEdit = () => {
+    setReviewMode(false);
+  };
+
+  if (reviewMode) {
+    return (
+      <CardReview
+        cardData={formData}
+        onConfirm={handleConfirm}
+        onEdit={handleEdit}
+      />
+    );
+  }
 
   return (
     <Container className="mt-4">
@@ -36,6 +97,11 @@ const CardForm = ({ onSubmit, initialData }) => {
             <h3 className="text-center mb-4">
               {initialData ? "Edit Card" : "Create Card"}
             </h3>
+            {showSuccess && (
+              <Alert variant="success">
+                Card successfully {initialData ? "updated" : "created"}!
+              </Alert>
+            )}
             <Form.Group controlId="formName">
               <Form.Label>Name</Form.Label>
               <Form.Control
@@ -44,8 +110,12 @@ const CardForm = ({ onSubmit, initialData }) => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
+                isInvalid={!!formErrors.name}
                 required
               />
+              <Form.Control.Feedback type="invalid">
+                {formErrors.name}
+              </Form.Control.Feedback>
             </Form.Group>
             <Form.Group controlId="formTitle">
               <Form.Label>Title</Form.Label>
@@ -75,7 +145,11 @@ const CardForm = ({ onSubmit, initialData }) => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
+                isInvalid={!!formErrors.email}
               />
+              <Form.Control.Feedback type="invalid">
+                {formErrors.email}
+              </Form.Control.Feedback>
             </Form.Group>
             <Form.Group controlId="formPhone">
               <Form.Label>Phone</Form.Label>
@@ -85,7 +159,11 @@ const CardForm = ({ onSubmit, initialData }) => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
+                isInvalid={!!formErrors.phone}
               />
+              <Form.Control.Feedback type="invalid">
+                {formErrors.phone}
+              </Form.Control.Feedback>
             </Form.Group>
             <Form.Group controlId="formWebsite">
               <Form.Label>Website</Form.Label>
