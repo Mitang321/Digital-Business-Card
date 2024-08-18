@@ -1,21 +1,57 @@
-import React, { useState } from "react";
+// src/App.js
+import React, { useState, useEffect } from "react";
 import CardForm from "./components/CardForm";
 import CardDisplay from "./components/CardDisplay";
-import { Container } from "react-bootstrap";
+import { Button } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   const [cardData, setCardData] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
-  const handleCardCreation = (data) => {
+  useEffect(() => {
+    const savedCardData = localStorage.getItem("cardData");
+    if (savedCardData) {
+      setCardData(JSON.parse(savedCardData));
+    }
+  }, []);
+
+  const handleFormSubmit = (data) => {
     setCardData(data);
+    setIsEditing(false);
+  };
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleCreateNewClick = () => {
+    setCardData(null);
+    setIsEditing(true);
   };
 
   return (
-    <Container className="my-4">
-      <h1>Digital Business Card</h1>
-      <CardForm onSubmit={handleCardCreation} />
-      {cardData && <CardDisplay cardData={cardData} />}
-    </Container>
+    <div className="App">
+      {isEditing || !cardData ? (
+        <CardForm onSubmit={handleFormSubmit} initialData={cardData} />
+      ) : (
+        <>
+          <CardDisplay cardData={cardData} />
+          <div className="text-center mt-3">
+            <Button variant="secondary" onClick={handleEditClick}>
+              Edit Card
+            </Button>
+            <Button
+              variant="primary"
+              onClick={handleCreateNewClick}
+              className="ml-2"
+            >
+              Create New Card
+            </Button>
+          </div>
+        </>
+      )}
+    </div>
   );
 }
 

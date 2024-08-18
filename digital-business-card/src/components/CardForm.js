@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Button, Container } from "react-bootstrap";
 
-const CardForm = ({ onSubmit }) => {
+const CardForm = ({ onSubmit, initialData }) => {
   const [formData, setFormData] = useState({
     name: "",
     title: "",
@@ -12,7 +12,14 @@ const CardForm = ({ onSubmit }) => {
     bgColor: "#ffffff",
     textColor: "#000000",
     borderStyle: "solid",
+    ...initialData,
   });
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData({ ...formData, ...initialData });
+    }
+  }, [initialData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,15 +28,23 @@ const CardForm = ({ onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const uniqueURL = `https://192.168.1.12:3000/card/${encodeURIComponent(
+    const uniqueURL = `http://192.168.1.12:3000/card/${encodeURIComponent(
       formData.name
     )}`;
-    onSubmit({ ...formData, cardURL: uniqueURL });
+    const cardData = { ...formData, cardURL: uniqueURL };
+
+    localStorage.setItem("cardData", JSON.stringify(cardData));
+
+    onSubmit(cardData);
   };
 
   return (
     <Container>
-      <h2 className="my-4">Create Your Digital Business Card</h2>
+      <h2 className="my-4">
+        {initialData
+          ? "Edit Your Digital Business Card"
+          : "Create Your Digital Business Card"}
+      </h2>
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="formName">
           <Form.Label>Name</Form.Label>
@@ -132,7 +147,7 @@ const CardForm = ({ onSubmit }) => {
         </Form.Group>
 
         <Button variant="primary" type="submit">
-          Create Card
+          {initialData ? "Save Changes" : "Create Card"}
         </Button>
       </Form>
     </Container>
