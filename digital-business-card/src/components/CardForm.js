@@ -90,10 +90,10 @@ const CardForm = ({ onSubmit, initialData }) => {
   }
 
   return (
-    <Container className="mt-4">
+    <Container className="mt-5">
       <Row className="justify-content-center">
-        <Col md={6} lg={4}>
-          <Form onSubmit={handleSubmit}>
+        <Col md={8} lg={6}>
+          <Form onSubmit={handleSubmit} className="shadow p-4 bg-light rounded">
             <h3 className="text-center mb-4">
               {initialData ? "Edit Card" : "Create Card"}
             </h3>
@@ -189,7 +189,7 @@ const CardForm = ({ onSubmit, initialData }) => {
                   src={formData.image}
                   alt="Image preview"
                   fluid
-                  className="mt-3"
+                  className="mt-3 rounded"
                 />
               )}
             </Form.Group>

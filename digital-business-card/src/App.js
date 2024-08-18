@@ -5,9 +5,11 @@ import {
   Route,
   Routes,
   useParams,
+  Link,
 } from "react-router-dom";
 import CardForm from "./components/CardForm";
 import CardDisplay from "./components/CardDisplay";
+import Home from "./components/Home";
 import { Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -40,42 +42,53 @@ function App() {
   const handleDeleteClick = () => {
     localStorage.removeItem("cardData");
     setCardData(null);
-    setIsEditing(true);
+    setIsEditing(false);
   };
 
   return (
     <Router>
       <div className="App">
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route
-            path="/"
+            path="/create"
             element={
-              isEditing || !cardData ? (
-                <CardForm onSubmit={handleFormSubmit} initialData={cardData} />
-              ) : (
-                <>
-                  <CardDisplay cardData={cardData} />
+              <CardForm onSubmit={handleFormSubmit} initialData={cardData} />
+            }
+          />
+          <Route
+            path="/view"
+            element={
+              <>
+                {cardData ? (
+                  <>
+                    <CardDisplay cardData={cardData} />
+                    <div className="text-center mt-3">
+                      <Button variant="secondary" onClick={handleEditClick}>
+                        Edit Card
+                      </Button>
+                      <Button
+                        variant="danger"
+                        onClick={handleDeleteClick}
+                        className="ms-2"
+                      >
+                        Delete Card
+                      </Button>
+                      <Link to="/create">
+                        <Button variant="primary" className="ms-2">
+                          Create New Card
+                        </Button>
+                      </Link>
+                    </div>
+                  </>
+                ) : (
                   <div className="text-center mt-3">
-                    <Button variant="secondary" onClick={handleEditClick}>
-                      Edit Card
-                    </Button>
-                    <Button
-                      variant="primary"
-                      onClick={handleCreateNewClick}
-                      className="ml-2"
-                    >
+                    <Button variant="primary" onClick={handleCreateNewClick}>
                       Create New Card
                     </Button>
-                    <Button
-                      variant="danger"
-                      onClick={handleDeleteClick}
-                      className="ml-2"
-                    >
-                      Delete Card
-                    </Button>
                   </div>
-                </>
-              )
+                )}
+              </>
             }
           />
           <Route path="/card/:name" element={<CardFromURL />} />
@@ -93,7 +106,7 @@ function CardFromURL() {
     return <CardDisplay cardData={savedCardData} />;
   }
 
-  return <p>No card found for {name}</p>;
+  return <p className="text-center mt-5">No card found for {name}</p>;
 }
 
 export default App;
