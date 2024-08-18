@@ -9,6 +9,9 @@ const CardForm = ({ onSubmit }) => {
     email: "",
     phone: "",
     profilePicture: "",
+    bgColor: "#ffffff",
+    textColor: "#000000",
+    borderStyle: "solid",
   });
 
   const handleChange = (e) => {
@@ -18,7 +21,10 @@ const CardForm = ({ onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    const uniqueURL = `https://192.168.1.12:3000/card/${encodeURIComponent(
+      formData.name
+    )}`;
+    onSubmit({ ...formData, cardURL: uniqueURL });
   };
 
   return (
@@ -89,6 +95,40 @@ const CardForm = ({ onSubmit }) => {
             value={formData.profilePicture}
             onChange={handleChange}
           />
+        </Form.Group>
+
+        <Form.Group controlId="formBgColor">
+          <Form.Label>Background Color</Form.Label>
+          <Form.Control
+            type="color"
+            name="bgColor"
+            value={formData.bgColor}
+            onChange={handleChange}
+          />
+        </Form.Group>
+
+        <Form.Group controlId="formTextColor">
+          <Form.Label>Text Color</Form.Label>
+          <Form.Control
+            type="color"
+            name="textColor"
+            value={formData.textColor}
+            onChange={handleChange}
+          />
+        </Form.Group>
+
+        <Form.Group controlId="formBorderStyle">
+          <Form.Label>Border Style</Form.Label>
+          <Form.Control
+            as="select"
+            name="borderStyle"
+            value={formData.borderStyle}
+            onChange={handleChange}
+          >
+            <option value="solid">Solid</option>
+            <option value="dashed">Dashed</option>
+            <option value="dotted">Dotted</option>
+          </Form.Control>
         </Form.Group>
 
         <Button variant="primary" type="submit">
