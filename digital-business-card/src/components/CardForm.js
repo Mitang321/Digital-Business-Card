@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Form, Button, Container } from "react-bootstrap";
+import { Form, Button, Container, Row, Col, Image } from "react-bootstrap";
 
 const CardForm = ({ onSubmit, initialData }) => {
   const [formData, setFormData] = useState({
@@ -8,16 +8,13 @@ const CardForm = ({ onSubmit, initialData }) => {
     company: "",
     email: "",
     phone: "",
-    profilePicture: "",
-    bgColor: "#ffffff",
-    textColor: "#000000",
-    borderStyle: "solid",
-    ...initialData,
+    website: "",
+    image: "",
   });
 
   useEffect(() => {
     if (initialData) {
-      setFormData({ ...formData, ...initialData });
+      setFormData(initialData);
     }
   }, [initialData]);
 
@@ -28,128 +25,102 @@ const CardForm = ({ onSubmit, initialData }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const uniqueURL = `http://192.168.1.12:3000/card/${encodeURIComponent(
-      formData.name
-    )}`;
-    const cardData = { ...formData, cardURL: uniqueURL };
-
-    localStorage.setItem("cardData", JSON.stringify(cardData));
-
-    onSubmit(cardData);
+    onSubmit(formData);
   };
 
   return (
-    <Container>
-      <h2 className="my-4">
-        {initialData
-          ? "Edit Your Digital Business Card"
-          : "Create Your Digital Business Card"}
-      </h2>
-      <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="formName">
-          <Form.Label>Name</Form.Label>
-          <Form.Control
-            type="text"
-            name="name"
-            placeholder="Enter your name"
-            value={formData.name}
-            onChange={handleChange}
-          />
-        </Form.Group>
-
-        <Form.Group controlId="formTitle">
-          <Form.Label>Title</Form.Label>
-          <Form.Control
-            type="text"
-            name="title"
-            placeholder="Enter your title"
-            value={formData.title}
-            onChange={handleChange}
-          />
-        </Form.Group>
-
-        <Form.Group controlId="formCompany">
-          <Form.Label>Company</Form.Label>
-          <Form.Control
-            type="text"
-            name="company"
-            placeholder="Enter your company"
-            value={formData.company}
-            onChange={handleChange}
-          />
-        </Form.Group>
-
-        <Form.Group controlId="formEmail">
-          <Form.Label>Email</Form.Label>
-          <Form.Control
-            type="email"
-            name="email"
-            placeholder="Enter your email"
-            value={formData.email}
-            onChange={handleChange}
-          />
-        </Form.Group>
-
-        <Form.Group controlId="formPhone">
-          <Form.Label>Phone Number</Form.Label>
-          <Form.Control
-            type="text"
-            name="phone"
-            placeholder="Enter your phone number"
-            value={formData.phone}
-            onChange={handleChange}
-          />
-        </Form.Group>
-
-        <Form.Group controlId="formProfilePicture">
-          <Form.Label>Profile Picture URL</Form.Label>
-          <Form.Control
-            type="text"
-            name="profilePicture"
-            placeholder="Enter profile picture URL"
-            value={formData.profilePicture}
-            onChange={handleChange}
-          />
-        </Form.Group>
-
-        <Form.Group controlId="formBgColor">
-          <Form.Label>Background Color</Form.Label>
-          <Form.Control
-            type="color"
-            name="bgColor"
-            value={formData.bgColor}
-            onChange={handleChange}
-          />
-        </Form.Group>
-
-        <Form.Group controlId="formTextColor">
-          <Form.Label>Text Color</Form.Label>
-          <Form.Control
-            type="color"
-            name="textColor"
-            value={formData.textColor}
-            onChange={handleChange}
-          />
-        </Form.Group>
-
-        <Form.Group controlId="formBorderStyle">
-          <Form.Label>Border Style</Form.Label>
-          <Form.Control
-            as="select"
-            name="borderStyle"
-            value={formData.borderStyle}
-            onChange={handleChange}
-          >
-            <option value="solid">Solid</option>
-            <option value="dashed">Dashed</option>
-            <option value="dotted">Dotted</option>
-          </Form.Control>
-        </Form.Group>
-
-        <Button variant="primary" type="submit">
-          {initialData ? "Save Changes" : "Create Card"}
-        </Button>
-      </Form>
+    <Container className="mt-4">
+      <Row className="justify-content-center">
+        <Col md={6} lg={4}>
+          <Form onSubmit={handleSubmit}>
+            <h3 className="text-center mb-4">
+              {initialData ? "Edit Card" : "Create Card"}
+            </h3>
+            <Form.Group controlId="formName">
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter your name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
+            <Form.Group controlId="formTitle">
+              <Form.Label>Title</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter your title"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="formCompany">
+              <Form.Label>Company</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter your company"
+                name="company"
+                value={formData.company}
+                onChange={handleChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="formEmail">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                placeholder="Enter your email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="formPhone">
+              <Form.Label>Phone</Form.Label>
+              <Form.Control
+                type="tel"
+                placeholder="Enter your phone number"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="formWebsite">
+              <Form.Label>Website</Form.Label>
+              <Form.Control
+                type="url"
+                placeholder="Enter your website"
+                name="website"
+                value={formData.website}
+                onChange={handleChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="formImage">
+              <Form.Label>Image URL</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter image URL"
+                name="image"
+                value={formData.image}
+                onChange={handleChange}
+              />
+              {formData.image && (
+                <Image
+                  src={formData.image}
+                  alt="Image preview"
+                  fluid
+                  className="mt-3"
+                />
+              )}
+            </Form.Group>
+            <Button variant="primary" type="submit" className="mt-3 w-100">
+              {initialData ? "Update Card" : "Create Card"}
+            </Button>
+          </Form>
+        </Col>
+      </Row>
     </Container>
   );
 };

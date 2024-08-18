@@ -1,5 +1,11 @@
 // src/App.js
 import React, { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useParams,
+} from "react-router-dom";
 import CardForm from "./components/CardForm";
 import CardDisplay from "./components/CardDisplay";
 import { Button } from "react-bootstrap";
@@ -18,6 +24,7 @@ function App() {
 
   const handleFormSubmit = (data) => {
     setCardData(data);
+    localStorage.setItem("cardData", JSON.stringify(data));
     setIsEditing(false);
   };
 
@@ -30,29 +37,63 @@ function App() {
     setIsEditing(true);
   };
 
+  const handleDeleteClick = () => {
+    localStorage.removeItem("cardData");
+    setCardData(null);
+    setIsEditing(true);
+  };
+
   return (
-    <div className="App">
-      {isEditing || !cardData ? (
-        <CardForm onSubmit={handleFormSubmit} initialData={cardData} />
-      ) : (
-        <>
-          <CardDisplay cardData={cardData} />
-          <div className="text-center mt-3">
-            <Button variant="secondary" onClick={handleEditClick}>
-              Edit Card
-            </Button>
-            <Button
-              variant="primary"
-              onClick={handleCreateNewClick}
-              className="ml-2"
-            >
-              Create New Card
-            </Button>
-          </div>
-        </>
-      )}
-    </div>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route
+            path="/"
+            element={
+              isEditing || !cardData ? (
+                <CardForm onSubmit={handleFormSubmit} initialData={cardData} />
+              ) : (
+                <>
+                  <CardDisplay cardData={cardData} />
+                  <div className="text-center mt-3">
+                    <Button variant="secondary" onClick={handleEditClick}>
+                      Edit Card
+                    </Button>
+                    <Button
+                      variant="primary"
+                      onClick={handleCreateNewClick}
+                      className="ml-2"
+                    >
+                      Create New Card
+                    </Button>
+                    <Button
+                      variant="danger"
+                      onClick={handleDeleteClick}
+                      className="ml-2"
+                    >
+                      Delete Card
+                    </Button>
+                  </div>
+                </>
+              )
+            }
+          />
+          <Route path="/card/:name" element={<CardFromURL />} />
+        </Routes>
+      </div>
+    </Router>
   );
+}
+
+function CardFromURL() {
+  const { name } = useParams();
+  const savedCardData = JSON.parse(localStorage.getItem("cardData"));
+
+  if (savedCardData && savedCardData.name === decodeURIComponent(name)) {
+    return <CardDisplay cardData={savedCardData} />;
+  }
+
+  return <p>No card found for {name}</p>;
 }
 
 export default App;
