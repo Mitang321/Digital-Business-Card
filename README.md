@@ -14,3 +14,10 @@ Welcome to the Digital Business Card App! This application allows users to creat
 
 ![image](https://github.com/user-attachments/assets/f7a0b0d2-0c80-4936-b2d1-c4befae08526)
 ![image](https://github.com/user-attachments/assets/f51b2f90-8ca2-4dad-8ed2-8607cc8a8ca1)
+
+## Installation
+
+1: `Clone the Repository`
+2: `cd Digital-Business-Card`
+ 3. `npm install`
+ 4. `npm start`
