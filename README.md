@@ -1,5 +1,10 @@
 ## Digital Business Card App
 
+## Live Preview
+
+[Live Preview](https://digital-business-card-gilt-tau.vercel.app/)
+
+
 Welcome to the Digital Business Card App! This application allows users to create, manage, and view digital business cards with ease. <br>
 
 ## Home Screen
